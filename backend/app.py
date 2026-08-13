@@ -1,4 +1,5 @@
 
+
 # Import necessary libraries
 import numpy as np
 import joblib  # For loading the serialized model
@@ -31,7 +32,6 @@ def forecast_sales():
         'Store_Size': data['Store_Size'],
         'Store_Location_City_Type': data['Store_Location_City_Type'],
         'Store_Type': data['Store_Type'],
-        'Product_Id_char': data['Product_Id_char'],
         'Store_Age_Years': data['Store_Age_Years'],
         'Product_Type': data['Product_Type']
     }
@@ -50,23 +50,40 @@ def forecast_sales():
 def forecast_sales_batch():
     """
     This function handles POST requests to the '/v1/forecastbatch' endpoint.
-    It expects a CSV file containing details for multiple products
+    It expects a CSV file containing details for multiple products,
+    including 'Product_Id' and 'Store_Establishment_Year'.
     """
     # Get the uploaded CSV file from the request
     file = request.files['file']
 
     # Read the CSV file into a Pandas DataFrame
-    input_data = pd.read_csv(file)
+    input_df = pd.read_csv(file)
+
+    # Store Product_Id for output mapping
+    product_ids = input_df['Product_Id'].tolist()
+
+    # Calculate Store_Age_Years
+    input_df['Store_Age_Years'] = 2025 - input_df['Store_Establishment_Year']
+
+    # Define columns needed for prediction, aligning with X_train
+    # The preprocessor handles one-hot encoding of categorical features.
+    features_for_model = [
+        'Product_Weight', 'Product_Sugar_Content', 'Product_Allocated_Area',
+        'Product_Type', 'Product_MRP', 'Store_Size',
+        'Store_Location_City_Type', 'Store_Type', 'Store_Age_Years'
+    ]
+    
+    # Select and reorder columns for prediction
+    input_data_for_prediction = input_df[features_for_model]
 
     # Make predictions for all products in the DataFrame
-    predicted_sales = model.predict(input_data).tolist()
+    predicted_sales = model.predict(input_data_for_prediction).tolist()
 
-    # Create a dictionary of predictions with property IDs as keys
-    product_ids = input_data['Product_Id'].tolist()  # Assuming 'Product_Id' is the ID column
+    # Create a dictionary of predictions with product IDs as keys
     output_dict = dict(zip(product_ids, predicted_sales))
 
     # Return the predictions dictionary as a JSON response
-    return output_dict
+    return jsonify(output_dict)
 
 
 # Run the Flask app in debug mode
