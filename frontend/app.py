@@ -5,7 +5,7 @@ import requests
 # Base URL of the Flask backend
 BACKEND_URL = "http://backend:7860"
 
-st.title("SuperKart sales forecasting") 
+st.title("SuperKart sales forecasting")
 st.subheader("Please enter the following product details to get forecast for the sales.")
 
 # Input fields for product and store data
@@ -17,7 +17,7 @@ Store_Size = st.selectbox("Store_Size", ["High", "Medium", "Small"])
 Store_Location_City_Type = st.selectbox("Store_Location_City_Type", ["Tier_1", "Tier_2", "Tier_3"])
 Store_Type = st.selectbox("Store_Type", ["Departmental Store", "Supermarket Type 1", "Supermarket Type 2", "Food Mart"])
 Store_Age_Years = st.number_input("Store_Age_Years", min_value=1, max_value=50, value=20)
-Product_Type = st.selectbox("Product_Type", ["Baking goods", "Bread", "Breakfast", "Canned", "Dairy", "Frozen foods", 
+Product_Type = st.selectbox("Product_Type", ["Baking goods", "Bread", "Breakfast", "Canned", "Dairy", "Frozen foods",
                                                       "Fruits and vegetables", "Hard drinks", "Health and hygiene",
                                                       "Household", "Meat", "Snack foods", "Soft drinks", "Seafood",
                                                       "Starchy foods", "Others"])
@@ -35,7 +35,7 @@ product_data = {
 }
 
 if st.button("Forecast", type='primary'):
-    response = requests.post(f"{BACKEND_URL}/v1/forecast", json=product_data)   
+    response = requests.post(f"{BACKEND_URL}/v1/forecast", json=product_data)
     if response.status_code == 200:
         result = response.json()
         predicted_sales = result["Sales"]
