@@ -1,5 +1,4 @@
 
-
 # Import necessary libraries
 import numpy as np
 import joblib  # For loading the serialized model
@@ -9,7 +8,7 @@ from flask import Flask, request, jsonify  # For creating the Flask API
 # Initialize Flask app with a name
 superkart_api = Flask("SuperKart")
 
-# Load the trained churn prediction model
+# Load the trained superkart forecast model
 model = joblib.load("superkart_sales_forecast_model_v1_0.joblib")
 
 # Define a route for the home page
@@ -72,7 +71,7 @@ def forecast_sales_batch():
         'Product_Type', 'Product_MRP', 'Store_Size',
         'Store_Location_City_Type', 'Store_Type', 'Store_Age_Years'
     ]
-    
+
     # Select and reorder columns for prediction
     input_data_for_prediction = input_df[features_for_model]
 
